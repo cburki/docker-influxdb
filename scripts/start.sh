@@ -1,26 +1,27 @@
 #!/bin/bash
 
-VARDIR=/data/var
-OPTDIR=$VARDIR/opt
-STATEDIR=$VARDIR/state
-INFLUXDB_DATADIR=$OPTDIR/influxdb/data
-INFLUXDB_METADIR=$OPTDIR/influxdb/meta
-INFLUXDB_HHDIR=$OPTDIR/influxdb/hh
+VAR_DIR=/data/var
+OPT_DIR=$VAR_DIR/opt
+STATE_DIR=$VAR_DIR/state
+INFLUXDB_DIR=$OPT_DIR/influxdb
+INFLUXDB_DATADIR=$INFLUXDB_DIR/data
+INFLUXDB_METADIR=$INFLUXDB_DIR/meta
+INFLUXDB_HHDIR=$INFLUXDB_DIR/influxdb/hh
 
 # Setup data directories
-if [ ! -d $VARDIR ]; then
-    echo "Creating directory $VARDIR"
-    mkdir -p $VARDIR
+if [ ! -d $VAR_DIR ]; then
+    echo "Creating directory $VAR_DIR"
+    mkdir -p $VAR_DIR
 fi
 
-if [ ! -d $OPTDIR ]; then
-    echo "Creating directory $OPTDIR"
-    mkdir -p $OPTDIR
+if [ ! -d $OPT_DIR ]; then
+    echo "Creating directory $OPT_DIR"
+    mkdir -p $OPT_DIR
 fi
 
-if [ ! -d $STATEDIR ]; then
-    echo "Creating directory $STATEDIR"
-    mkdir -p $STATEDIR
+if [ ! -d $STATE_DIR ]; then
+    echo "Creating directory $STATE_DIR"
+    mkdir -p $STATE_DIR
 fi
 
 if [ ! -d $INFLUXDB_DATADIR ]; then
@@ -38,9 +39,9 @@ if [ ! -d $INFLUXDB_HHDIR ]; then
     mkdir -p $INLUXDB_HHDIR
 fi
 
-echo $INFLUXDB_DATADIR > $STATEDIR/influxdb-datadir.txt
+echo $INFLUXDB_DATADIR > $STATE_DIR/influxdb-datadir.txt
 
-if [ ! -f $STATEDIR/influxdb.initialized ]; then
+if [ ! -f $STATE_DIR/influxdb.initialized ]; then
 
     CONFFILE=/etc/opt/influxdb/influxdb.conf
     PIDFILE=/var/run/influxdb/influxdb.pid
@@ -52,7 +53,7 @@ if [ ! -f $STATEDIR/influxdb.initialized ]; then
 
     if [ -n "$INFLUXDB_PASSWORD" ]; then
         # Set the root password and enable authentication
-        echo $INFLUXDB_PASSWORD > $STATEDIR/influxdb-db-pwd.txt
+        echo $INFLUXDB_PASSWORD > $STATE_DIR/influxdb-db-pwd.txt
 
         echo "Setting up influxdb cluster admin privileges"
         # Set the influxdb root password
@@ -60,15 +61,17 @@ if [ ! -f $STATEDIR/influxdb.initialized ]; then
 
         # Copy the configuration with authentication enabled
         mv /tmp/influxdb.conf $CONFFILE
+
+    else
+        # Do not enable authentication
+        echo "WARNING : Authentication not enabled"
     fi
     
     kill `cat $PIDFILE`
-    echo "done" > $STATEDIR/influxdb.initialized
+    echo "done" > $STATE_DIR/influxdb.initialized
     rm -f $PIDFILE
 
-    chown -R influxdb:influxdb $INFLUXDB_DATADIR
-    chown -R influxdb:influxdb $INFLUXDB_METADIR
-    chown -R influxdb:influxdb $INFLUXDB_HHDIR
+    chown -R influxdb:influxdb $INFLUXDB_DIR
     chown -R influxdb:influxdb /opt/influxdb
     chown -R influxdb:influxdb /var/opt/influxdb
     chown -R influxdb:influxdb /var/run/influxdb
