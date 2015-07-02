@@ -4,8 +4,8 @@ Summary
 InfluxDB server image. For persistent storage, you could use the cburki/influxdb-data container to store the databases data. This image does not yet support the clustering.
 
 
-Build
------
+Build the image
+---------------
 
 To create this image, execute the following command in the docker-influxdb folder.
 
