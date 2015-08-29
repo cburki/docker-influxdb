@@ -9,6 +9,7 @@ INFLUXDB_ETCDIR=$ETC_DIR/influxdb
 INFLUXDB_RUNDIR=$RUN_DIR/influxdb
 INFLUXDB_OPTDIR=$OPT_DIR/influxdb
 INFLUXDB_DATADIR=$INFLUXDB_OPTDIR/data
+INFLUXDB_WALDIR=$INFLUXDB_OPTDIR/wal
 INFLUXDB_METADIR=$INFLUXDB_OPTDIR/meta
 INFLUXDB_HHDIR=$INFLUXDB_OPTDIR/influxdb/hh
 
@@ -51,6 +52,11 @@ fi
 if [ ! -d $INFLUXDB_DATADIR ]; then
     echo "Creating directory $INFLUXDB_DATADIR"
     mkdir -p $INFLUXDB_DATADIR
+fi
+
+if [ ! -d $INFLUXDB_WALDIR ]; then
+    echo "Creating directory $INFLUXDB_WALDIR"
+    mkdir -p $INFLUXDB_WALDIR
 fi
 
 if [ ! -d $INFLUXDB_METADIR ]; then
