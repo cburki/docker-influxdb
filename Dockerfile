@@ -1,11 +1,10 @@
 FROM debian:jessie
 MAINTAINER Christophe Burki, christophe.burki@gmail.com
 
-ENV INFLUXDB_VERSION 0.9.4.1
+ENV INFLUXDB_VERSION 0.9.4.2
 
 # Install system requirements
 RUN apt-get update && apt-get install -y \
-    curl \
     locales \
     python-pip
 
@@ -17,7 +16,7 @@ RUN cp /usr/share/zoneinfo/Europe/Zurich /etc/localtime
 RUN echo "Europe/Zurich" > /etc/timezone
 
 # Install influxdb
-RUN curl https://s3.amazonaws.com/influxdb/influxdb_${INFLUXDB_VERSION}_amd64.deb -o /tmp/influxdb_amd64.deb
+ADD https://s3.amazonaws.com/influxdb/influxdb_${INFLUXDB_VERSION}_amd64.deb /tmp/influxdb_amd64.deb
 RUN dpkg -i /tmp/influxdb_amd64.deb
 
 # Influxdb config
