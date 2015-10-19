@@ -1,7 +1,9 @@
 Summary
 -------
 
-InfluxDB server image. For persistent storage, you could use the cburki/influxdb-data container to store the databases data. This image does not yet support the clustering.
+InfluxDB server image. For persistent storage, you could use the cburki/influxdb-data
+container to store the databases data. This image does not yet support the
+clustering.
 
 
 Build the image
@@ -23,7 +25,9 @@ You can configure the image with environment variables.
 Run the image
 -------------
 
-When you run the image, you will bind the ports 8083 and 8086. InfluxDB will write the data in the /data/var/opt/influxdb folder which could be used from the cburki/influxdb-data container.
+When you run the image, you will bind the ports 8083 and 8086. InfluxDB will
+write the data in the /data/var/opt/influxdb folder which could be used from
+a volume data container.
 
     docker run \
         --name influxdb \
@@ -33,3 +37,11 @@ When you run the image, you will bind the ports 8083 and 8086. InfluxDB will wri
         -p 8083:8083 \
         -p 8086:8086 \
         cburki/influxdb:latest
+
+The volume data container could be started using the following command.
+
+    docker run \
+        --name influxdb-data \
+        -d \
+        cburki/volume-data:latest
+
