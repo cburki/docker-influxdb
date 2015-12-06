@@ -3,15 +3,16 @@
 VAR_DIR=/data/var
 ETC_DIR=/data/etc
 RUN_DIR=$VAR_DIR/run
-OPT_DIR=$VAR_DIR/opt
+LIB_DIR=$VAR_DIR/lib
 STATE_DIR=$VAR_DIR/state
 INFLUXDB_ETCDIR=$ETC_DIR/influxdb
 INFLUXDB_RUNDIR=$RUN_DIR/influxdb
-INFLUXDB_OPTDIR=$OPT_DIR/influxdb
-INFLUXDB_DATADIR=$INFLUXDB_OPTDIR/data
-INFLUXDB_WALDIR=$INFLUXDB_OPTDIR/wal
-INFLUXDB_METADIR=$INFLUXDB_OPTDIR/meta
-INFLUXDB_HHDIR=$INFLUXDB_OPTDIR/influxdb/hh
+INFLUXDB_LIBDIR=$LIB_DIR/influxdb
+INFLUXDB_METADIR=$INFLUXDB_LIBDIR/meta
+INFLUXDB_DATADIR=$INFLUXDB_LIBDIR/data
+INFLUXDB_WALDIR=$INFLUXDB_LIBDIR/wal
+INFLUXDB_HHDIR=$INFLUXDB_LIBDIR/hh
+
 
 # Setup data directories
 if [ ! -d $VAR_DIR ]; then
@@ -29,9 +30,9 @@ if [ ! -d $RUN_DIR ]; then
     mkdir -p $RUN_DIR
 fi
 
-if [ ! -d $OPT_DIR ]; then
-    echo "Creating directory $OPT_DIR"
-    mkdir -p $OPT_DIR
+if [ ! -d $LIB_DIR ]; then
+    echo "Creating directory $LIB_DIR"
+    mkdir -p $LIB_DIR
 fi
 
 if [ ! -d $STATE_DIR ]; then
@@ -49,6 +50,11 @@ if [ ! -d $INFLUXDB_RUNDIR ]; then
     mkdir -p $INFLUXDB_RUNDIR
 fi
 
+if [ ! -d $INFLUXDB_METADIR ]; then
+    echo "Creating directory $INFLUXDB_METADIR"
+    mkdir -p $INFLUXDB_METADIR
+fi
+
 if [ ! -d $INFLUXDB_DATADIR ]; then
     echo "Creating directory $INFLUXDB_DATADIR"
     mkdir -p $INFLUXDB_DATADIR
@@ -57,11 +63,6 @@ fi
 if [ ! -d $INFLUXDB_WALDIR ]; then
     echo "Creating directory $INFLUXDB_WALDIR"
     mkdir -p $INFLUXDB_WALDIR
-fi
-
-if [ ! -d $INFLUXDB_METADIR ]; then
-    echo "Creating directory $INFLUXDB_METADIR"
-    mkdir -p $INFLUXDB_METADIR
 fi
 
 if [ ! -d $INFLUXDB_HHDIR ]; then
@@ -78,7 +79,7 @@ if [ ! -f $STATE_DIR/influxdb.initialized ]; then
     mv /tmp/influxdb-noauth.conf $CONFFILE
     
     echo "Starting influxdb"
-    /opt/influxdb/influxd -config=$CONFFILE -pidfile=$PIDFILE &
+    /usr/bin/influxd -config $CONFFILE -pidfile $PIDFILE &
     sleep 10
 
     if [ -n "$INFLUXDB_PASSWORD" ]; then
@@ -103,10 +104,9 @@ if [ ! -f $STATE_DIR/influxdb.initialized ]; then
 fi
 
 # Set influxdb permissions.
-chown -R influxdb:influxdb $INFLUXDB_OPTDIR
+chown -R influxdb:influxdb $INFLUXDB_LIBDIR
 chown -R influxdb:influxdb $INFLUXDB_RUNDIR
-chown -R influxdb:influxdb /opt/influxdb
-chown -R influxdb:influxdb /var/opt/influxdb
+chown -R influxdb:influxdb /var/log/influxdb
 
 echo "Starting supervisord"
 /usr/local/bin/supervisord -c /etc/supervisord.conf --loglevel=debug -n
