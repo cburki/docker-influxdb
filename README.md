@@ -1,7 +1,7 @@
 Summary
 -------
 
-InfluxDB server image. For persistent storage, you could use the cburki/influxdb-data
+InfluxDB server image. For persistent storage, you could use the cburki/volume-data
 container to store the databases data. This image does not yet support the
 clustering.
 
