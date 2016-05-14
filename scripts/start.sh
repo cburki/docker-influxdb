@@ -2,8 +2,10 @@
 
 VAR_DIR=/data/var
 ETC_DIR=/data/etc
+USR_DIR=/data/usr
 RUN_DIR=$VAR_DIR/run
 LIB_DIR=$VAR_DIR/lib
+SHARE_DIR=$USR_DIR/share
 STATE_DIR=$VAR_DIR/state
 INFLUXDB_ETCDIR=$ETC_DIR/influxdb
 INFLUXDB_RUNDIR=$RUN_DIR/influxdb
@@ -11,7 +13,7 @@ INFLUXDB_LIBDIR=$LIB_DIR/influxdb
 INFLUXDB_METADIR=$INFLUXDB_LIBDIR/meta
 INFLUXDB_DATADIR=$INFLUXDB_LIBDIR/data
 INFLUXDB_WALDIR=$INFLUXDB_LIBDIR/wal
-INFLUXDB_HHDIR=$INFLUXDB_LIBDIR/hh
+INFLUXDB_COLLECTDDIR=$SHARE_DIR/collectd
 
 
 # Setup data directories
@@ -33,6 +35,11 @@ fi
 if [ ! -d $LIB_DIR ]; then
     echo "Creating directory $LIB_DIR"
     mkdir -p $LIB_DIR
+fi
+
+if [ ! -d $SHARE_DIR ]; then
+    echo "Creating directory $SHARE_DIR"
+    mkdir -p $SHARE_DIR
 fi
 
 if [ ! -d $STATE_DIR ]; then
@@ -58,16 +65,16 @@ fi
 if [ ! -d $INFLUXDB_DATADIR ]; then
     echo "Creating directory $INFLUXDB_DATADIR"
     mkdir -p $INFLUXDB_DATADIR
+    mkdir -p $INFLUXDB_DATADIR/_internal
 fi
 
 if [ ! -d $INFLUXDB_WALDIR ]; then
     echo "Creating directory $INFLUXDB_WALDIR"
     mkdir -p $INFLUXDB_WALDIR
 fi
-
-if [ ! -d $INFLUXDB_HHDIR ]; then
-    echo "Creating directory $INFLUXDB_HHDIR"
-    mkdir -p $INFLUXDB_HHDIR
+if [ ! -d $INFLUXDB_COLLECTDDIR ]; then
+    echo "Creating directory $INFLUXDB_COLLECTDDIR"
+    mkdir -p $INFLUXDB_COLLECTDDIR
 fi
 
 echo $INFLUXDB_DATADIR > $STATE_DIR/influxdb-datadir.txt
@@ -106,6 +113,7 @@ fi
 # Set influxdb permissions.
 chown -R influxdb:influxdb $INFLUXDB_LIBDIR
 chown -R influxdb:influxdb $INFLUXDB_RUNDIR
+chown -R influxdb:influxdb $INFLUXDB_COLLECTDDIR
 chown -R influxdb:influxdb /var/log/influxdb
 
 echo "Starting supervisord"
