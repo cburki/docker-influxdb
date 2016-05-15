@@ -65,7 +65,6 @@ fi
 if [ ! -d $INFLUXDB_DATADIR ]; then
     echo "Creating directory $INFLUXDB_DATADIR"
     mkdir -p $INFLUXDB_DATADIR
-    mkdir -p $INFLUXDB_DATADIR/_internal
 fi
 
 if [ ! -d $INFLUXDB_WALDIR ]; then
@@ -95,7 +94,7 @@ if [ ! -f $STATE_DIR/influxdb.initialized ]; then
 
         echo "Setting up influxdb cluster admin privileges"
         # Set the influxdb root password
-        curl -G 'http://localhost:8086/query' --data-urlencode "q=CREATE USER root WITH PASSWORD '$INFLUXDB_PASSWORD' WITH ALL PRIVILEGES"
+        curl -POST 'http://localhost:8086/query' --data-urlencode "q=CREATE USER root WITH PASSWORD '$INFLUXDB_PASSWORD' WITH ALL PRIVILEGES"
 
         # Copy the configuration with authentication enabled
         mv /tmp/influxdb.conf $CONFFILE
@@ -108,9 +107,11 @@ if [ ! -f $STATE_DIR/influxdb.initialized ]; then
     kill `cat $PIDFILE`
     echo "done" > $STATE_DIR/influxdb.initialized
     rm -f $PIDFILE
+    sleep 10
 fi
 
 # Set influxdb permissions.
+echo "Setting permissions"
 chown -R influxdb:influxdb $INFLUXDB_LIBDIR
 chown -R influxdb:influxdb $INFLUXDB_RUNDIR
 chown -R influxdb:influxdb $INFLUXDB_COLLECTDDIR
