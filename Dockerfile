@@ -1,7 +1,7 @@
 FROM debian:jessie
 MAINTAINER Christophe Burki, christophe.burki@gmail.com
 
-ENV INFLUXDB_VERSION 0.13.0
+ENV INFLUXDB_VERSION 1.0.0
 
 # Install system requirements
 RUN apt-get update && apt-get install -y \
